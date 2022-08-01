@@ -33,7 +33,7 @@ Puppet::Reports.register_report(:loki) do
 
     req = Net::HTTP::Post.new(uri)
     req['Content-Type'] = 'application/json'
-    req['X-Scope-OrgID'] = 'tenant1'
+    req['X-Scope-OrgID'] = settings['tenant'] || 'tenant1'
     body = {
       "streams" => [{
             "stream" => { "puppet" => "reports", "host" => report[:host] },
