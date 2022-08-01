@@ -19,11 +19,10 @@ Puppet::Reports.register_report(:loki) do
 
   def push_to_loki(report)
     loki_uri = settings['loki_uri']
-    begin
+    if !loki_uri 
       Puppet.err "`loki_uri`` not defined for reporting to Loki"
       return
-    end 
-      unless loki_uri
+    end
 
     endpoint = "#{loki_uri}/loki/api/v1/push"
 
@@ -40,7 +39,8 @@ Puppet::Reports.register_report(:loki) do
             "stream" => { "puppet" => "reports", "host" => report[:host] },
             "values" => [
               # time needs to be in nanoseconds for Loki
-              [Time.now.strftime('%s%9N'), report.to_json]
+              [Time.now.strftime('%s%9N'), report.to_json],
+              [Time.now.strftime('%s%9N'), facts.to_json]
             ]
       }]
     }
@@ -89,7 +89,6 @@ Puppet::Reports.register_report(:loki) do
   def settings
     return @settings if @settings
     @settings_file = Puppet[:confdir] + '/loki.yaml'
-
     @settings = YAML.load_file(@settings_file)
   end
 
