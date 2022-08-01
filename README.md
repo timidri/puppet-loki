@@ -14,11 +14,13 @@ This function can be used from plans.
 
 This is a plan showing how to use the function `loki::push`.
 
-## loki.rb
+## lib/puppet/reports/loki.rb
 
 This is a Puppet Report Processor which can push Puppet reports to Loki.
 It is just for demo purposes, and has a hard-wired
 Loki host and no configuration options.
+
+For installing the report processor, see https://puppet.com/docs/puppet/7/reporting.html
 
 ## Supporting files
 

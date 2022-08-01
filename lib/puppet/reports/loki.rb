@@ -17,7 +17,7 @@ Puppet::Reports.register_report(:loki) do
   end
 
   def push_to_loki(report)
-    host = "dbtgraf1nix0.se.automationdemos.com"
+    host = "dbtgraf2nix0.se.automationdemos.com"
     endpoint = "http://#{host}:3100/loki/api/v1/push"
 
     Puppet.info(_('Submitting report to Loki service at %{endpoint}') % { endpoint: endpoint })
