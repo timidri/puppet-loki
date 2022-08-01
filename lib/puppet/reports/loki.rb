@@ -1,5 +1,6 @@
 # Loki Puppet report processor
 require 'puppet'
+require 'yaml'
 
 Puppet::Reports.register_report(:loki) do
   desc 'Submit reports to Grafana Loki'
@@ -17,8 +18,14 @@ Puppet::Reports.register_report(:loki) do
   end
 
   def push_to_loki(report)
-    host = "dbtgraf2nix0.se.automationdemos.com"
-    endpoint = "http://#{host}:3100/loki/api/v1/push"
+    loki_uri = settings['loki_uri']
+    begin
+      Puppet.err "`loki_uri`` not defined for reporting to Loki"
+      return
+    end 
+      unless loki_uri
+
+    endpoint = "#{loki_uri}/loki/api/v1/push"
 
     Puppet.info(_('Submitting report to Loki service at %{endpoint}') % { endpoint: endpoint })
     Puppet.debug(_('Report: %{r}') % { r: report })
@@ -78,4 +85,12 @@ Puppet::Reports.register_report(:loki) do
         end,
     })
   end
+
+  def settings
+    return @settings if @settings
+    @settings_file = Puppet[:confdir] + '/loki.yaml'
+
+    @settings = YAML.load_file(@settings_file)
+  end
+
 end
