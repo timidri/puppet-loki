@@ -44,7 +44,7 @@ Puppet::Reports.register_report(:loki) do
       }]
     }
     # only push facts if 'push_facts' is set to true
-    push_facts = config['push_facts'] || true
+    push_facts = settings['push_facts'] || true
     body['streams'][0]['values'].append([Time.now.strftime('%s%9N'), filtered_facts.to_json]) if push_facts
 
     Puppet.info(_('Body: %{body}') % { body: body.to_json })
