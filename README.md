@@ -21,6 +21,8 @@ It has the following configuration options to be set in `/etc/puppetlabs/puppet/
 
 * `loki_uri`: for example, `http://your_loki_host:3100`. This setting is mandatory.
 * `tenant`: the tenant to use by the report processor when pushing to Loki. Default: `tenant1`.
+* `push_facts`: choose whether or not to push facts to Loki together with reports. Default: `true`.
+* `include_facts`: an array of fact names to be included. Default: `null` (all facts).
 
 For installing the report processor, see https://puppet.com/docs/puppet/7/reporting.html
 
