@@ -40,14 +40,24 @@ Puppet::Reports.register_report(:loki) do
             "values" => [
               # time needs to be in nanoseconds for Loki
               [Time.now.strftime('%s%9N'), report.to_json],
-              [Time.now.strftime('%s%9N'), facts.to_json]
             ]
       }]
     }
+    # only push facts if 'push_facts' is set to true
+    push_facts = config['push_facts'] || true
+    body['streams'][0]['values'].append([Time.now.strftime('%s%9N'), filtered_facts.to_json]) if push_facts
+
     Puppet.info(_('Body: %{body}') % { body: body.to_json })
     req.body = body.to_json if body
     http = Net::HTTP.new(uri.host, uri.port)
     res = http.start { |sess| sess.request(req) }
+  end
+
+  # return facts filtered by the 'include_facts' setting
+  def filtered_facts
+    include_facts = settings['include_facts'] || nil
+    return facts.slice(*include_facts) if include_facts
+    return facts
   end
 
   def facts

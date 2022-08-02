@@ -19,7 +19,7 @@ plan loki::test(
 
   apply_prep($target)
   $results = apply($target, '_description' => 'Apply manifest') {
-    package { 'wget':
+    package { 'mlocate':
       ensure => installed,
     }
   }
