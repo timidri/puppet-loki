@@ -1,6 +1,7 @@
 # Loki Puppet report processor
 require 'puppet'
 require 'yaml'
+require 'logger'
 
 Puppet::Reports.register_report(:loki) do
   desc 'Submit reports to Grafana Loki'
@@ -9,12 +10,25 @@ Puppet::Reports.register_report(:loki) do
     # Puppet.notice(_('Processing report by Loki processor...'))
     with_report do |report|
       begin
-        push_to_loki(report)
+        log_destination = settings['log_destination'] || 'loki'
+        push_facts = settings['push_facts'] || true
+        if log_destination == 'loki'
+          push_to_loki(report)
+        else
+          write_to_log(report)
+       end
       end
     end
   rescue StandardError => e
     Puppet.err(_('Failed to submit reports to Loki: %{e}') % { e: e })
     Puppet.err(_('Backtrace: %{b}') % { b: e.backtrace })
+  end
+
+  def write_to_log(report)
+    log_path = settings['log_dir'] || '/var/log/loki_reports'
+    log = Logger.new( "#{host}.log", 'daily' )
+    log.info("REPORT\n" + report.to_json)
+    log.info("FACTS\n" + filtered_facts.to_json) if push_facts
   end
 
   def push_to_loki(report)
@@ -44,7 +58,6 @@ Puppet::Reports.register_report(:loki) do
       }]
     }
     # only push facts if 'push_facts' is set to true
-    push_facts = settings['push_facts'] || true
     body['streams'][0]['values'].append([Time.now.strftime('%s%9N'), filtered_facts.to_json]) if push_facts
 
     Puppet.info(_('Body: %{body}') % { body: body.to_json })
