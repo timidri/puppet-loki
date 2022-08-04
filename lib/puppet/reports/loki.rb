@@ -27,7 +27,7 @@ Puppet::Reports.register_report(:loki) do
   def write_to_log(report)
     log_path = settings['log_dir'] || '/var/log/loki_reports'
     log = Logger.new("#{log_path}/#{host}.log", 'daily')
-    Puppet.info(_('Writing report to file at %{log_path}/%{host}') % { log_path: log_path, host: host })
+    Puppet.info(_('Writing report to file at %{log_path}/%{host}.log') % { log_path: log_path, host: host })
     log.info("REPORT\n" + report.to_json)
     log.info("FACTS\n" + filtered_facts.to_json) if @push_facts
   end
