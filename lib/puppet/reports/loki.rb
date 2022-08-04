@@ -11,7 +11,7 @@ Puppet::Reports.register_report(:loki) do
     with_report do |report|
       begin
         log_destination = settings['log_destination'] || 'loki'
-        push_facts = settings['push_facts'] || true
+        @push_facts = settings['push_facts'] || true
         if log_destination == 'loki'
           push_to_loki(report)
         else
@@ -27,8 +27,9 @@ Puppet::Reports.register_report(:loki) do
   def write_to_log(report)
     log_path = settings['log_dir'] || '/var/log/loki_reports'
     log = Logger.new( "#{host}.log", 'daily' )
+    Puppet.info(_('Writing report to file service at %{log_path}/#{') % { endpoint: endpoint })
     log.info("REPORT\n" + report.to_json)
-    log.info("FACTS\n" + filtered_facts.to_json) if push_facts
+    log.info("FACTS\n" + filtered_facts.to_json) if @push_facts
   end
 
   def push_to_loki(report)
@@ -41,7 +42,6 @@ Puppet::Reports.register_report(:loki) do
     endpoint = "#{loki_uri}/loki/api/v1/push"
 
     Puppet.info(_('Submitting report to Loki service at %{endpoint}') % { endpoint: endpoint })
-    Puppet.debug(_('Report: %{r}') % { r: report })
 
     uri = URI.parse(endpoint)
 
@@ -57,10 +57,10 @@ Puppet::Reports.register_report(:loki) do
             ]
       }]
     }
-    # only push facts if 'push_facts' is set to true
-    body['streams'][0]['values'].append([Time.now.strftime('%s%9N'), filtered_facts.to_json]) if push_facts
+    # only push facts if '@push_facts' is set to true
+    body['streams'][0]['values'].append([Time.now.strftime('%s%9N'), filtered_facts.to_json]) if @push_facts
 
-    Puppet.info(_('Body: %{body}') % { body: body.to_json })
+    Puppet.debug(_('Body: %{body}') % { body: body.to_json })
     req.body = body.to_json if body
     http = Net::HTTP.new(uri.host, uri.port)
     res = http.start { |sess| sess.request(req) }
