@@ -5,14 +5,14 @@ from Puppet plans and Puppet reports to Grafana Loki.
 
 This repo contains 3 main components and some supporting files:
 
-## lib/puppet/functions/loki/push.rb
+## lib/puppet/functions/loki/log.rb
 
-This is a Puppet function `loki::push` for pushing data to a Loki service.
+This is a Puppet function `loki::log` for pushing data to a Loki service.
 This function can be used from plans.
 
 ## plans/test.pp
 
-This is a plan showing how to use the function `loki::push`.
+This is a plan showing how to use the function `loki::log`.
 
 ## lib/puppet/reports/loki.rb
 

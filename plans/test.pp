@@ -1,7 +1,10 @@
-# This plan tests pushing task, command and puppet run results to Loki
+# This plan tests logging task, command and puppet run results to Loki
 #
+# @param loki_dest The logging destination - either a Loki URL (no path), or an absolute file path.
+# @param target The target host to run the plan tasks and commands on
+# @param tenant The tenant for Loki
 plan loki::test(
-  TargetSpec $loki_host,
+  Pattern[/^https?:\/\/.*/,Pattern[/^\/.*/]] $loki_dest,
   TargetSpec $target,
   String[1] $tenant = 'tenant1',
 ) {
@@ -9,13 +12,13 @@ plan loki::test(
 
   out::message('Loki test')
   $service_result = run_task('service', $target, { 'action' => 'status', 'name' => 'sshd' })
-  loki::push($loki_host, $labels, $tenant, $service_result[0])
+  loki::log($loki_dest, $labels, $tenant, $service_result[0])
 
   $package_result = run_task('package', $target, { 'action' => 'status', 'name' => 'sshd' })
-  loki::push($loki_host, $labels, $tenant, $package_result[0])
+  loki::log($loki_dest, $labels, $tenant, $package_result[0])
 
   $command_result = run_command('wrongcommand', $target, '_catch_errors' => true)
-  loki::push($loki_host, $labels, $tenant, $command_result[0])
+  loki::log($loki_dest, $labels, $tenant, $command_result[0])
 
   apply_prep($target)
   $results = apply($target, '_description' => 'Apply manifest') {
@@ -23,5 +26,5 @@ plan loki::test(
       ensure => installed,
     }
   }
-  loki::push($loki_host, $labels, $tenant, $results)
+  loki::log($loki_dest, $labels, $tenant, $results)
 }
