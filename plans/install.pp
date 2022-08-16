@@ -1,11 +1,11 @@
 # this plan installs and start PoC Loki+Grafana services on a VM $target
 # not suitable for production!
 plan loki::install(
-  TargetSpec $target,
+  TargetSpec $targets,
   String[1] $install_dir = '/home/centos/loki',
 ) {
-  apply_prep($target);
-  $result_set = apply($target, '_description' => 'Install Docker') {
+  apply_prep($targets);
+  $result_set = apply($targets, '_description' => 'Install Docker') {
     include 'docker'
     class { 'docker::compose':
       ensure  => present,
@@ -23,5 +23,5 @@ plan loki::install(
     }
   }
 
-  run_command("cd ${install_dir} && /usr/local/bin/docker-compose up -d", $target, 'Start loki')
+  run_command("cd ${install_dir} && /usr/local/bin/docker-compose up -d", $targets, 'Start loki')
 }

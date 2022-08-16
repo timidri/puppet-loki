@@ -55,6 +55,9 @@ Puppet::Functions.create_function(:'loki::log') do
   def write_log(path, labels, tenant, string_data)
     host = labels['host'] || 'nohost'
     log = Logger.new("#{path}/#{host}.log", 'daily')
+    log.formatter = proc do |severity, datetime, progname, msg|
+      "#{msg}\n"
+    end   
     puts("Writing loki log to file at #{path}/#{host}.log")
     log.info(string_data)
   end

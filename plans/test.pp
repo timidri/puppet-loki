@@ -5,23 +5,27 @@
 # @param tenant The tenant for Loki
 plan loki::test(
   Pattern[/^https?:\/\/.*/,Pattern[/^\/.*/]] $loki_dest,
-  TargetSpec $target,
-  String[1] $tenant = 'tenant1',
+  TargetSpec $targets,
+  Optional[String[1]] $tenant = undef,
 ) {
-  $labels = { 'host' => $target, 'puppet' => 'plan_logs' }
+  $labels = { 'host' => $targets, 'puppet' => 'plan_logs' }
+
+  # apply_prep($targets)
 
   out::message('Loki test')
-  $service_result = run_task('service', $target, { 'action' => 'status', 'name' => 'sshd' })
+  $service_result = run_task('service', $targets, { 'action' => 'status', 'name' => 'sshd' })
+  # apply($targets) { loki::log($loki_dest, $labels, $tenant, $service_result[0]) }
   loki::log($loki_dest, $labels, $tenant, $service_result[0])
+  fail_plan('einde')
 
-  $package_result = run_task('package', $target, { 'action' => 'status', 'name' => 'sshd' })
+  $package_result = run_task('package', $targets, { 'action' => 'status', 'name' => 'sshd' })
   loki::log($loki_dest, $labels, $tenant, $package_result[0])
 
-  $command_result = run_command('wrongcommand', $target, '_catch_errors' => true)
+  $command_result = run_command('wrongcommand', $targets, '_catch_errors' => true)
   loki::log($loki_dest, $labels, $tenant, $command_result[0])
 
-  apply_prep($target)
-  $results = apply($target, '_description' => 'Apply manifest') {
+  apply_prep($targets)
+  $results = apply($targets, '_description' => 'Apply manifest') {
     package { 'mlocate':
       ensure => installed,
     }

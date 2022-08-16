@@ -1,0 +1,18 @@
+---
+promtail::scrape_configs_hash:
+  scrape_configs:
+    - job_name: loki_logs
+      pipeline_stages:
+      static_configs:
+      - targets:
+          - "%{facts.networking.fqdn}"
+        labels:
+          job: loki_logs  # A `job` label is fairly standard in prometheus and useful for linking metrics and logs.
+          # host: "%{facts.networking.fqdn}" # A `host` label will help identify logs from this machine vs others
+          __path__: /var/log/loki_logs/*.log  # The path matching uses a third party library: https://github.com/bmatcuk/doublestar
+      - targets:
+          - "%{facts.networking.fqdn}"
+        labels:
+          job: loki_reports  # A `job` label is fairly standard in prometheus and useful for linking metrics and logs.
+          # host: "%{facts.networking.fqdn}" # A `host` label will help identify logs from this machine vs others
+          __path__: /var/log/loki_reports/*.log  # The path matching uses a third party library: https://github.com/bmatcuk/doublestar

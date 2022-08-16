@@ -1,3 +1,3 @@
 ---
 name: loki
-modules: ['puppetlabs-docker', 'puppet-archive']
+modules: ['puppetlabs-docker', 'puppet-archive', 'grafana-promtail']

@@ -1,0 +1,57 @@
+---
+# promtail::password_file_path: '/etc/promtail/.gc_pw'
+# promtail::password_file_content: ENC[PKCS7,MIIBasdfasdfasdfasdfasdfasdf==]
+promtail::server_config_hash:
+  server:
+    http_listen_port: 9274
+    grpc_listen_port: 0
+promtail::positions_config_hash:
+  positions:
+    filename: /tmp/positions.yaml
+promtail::scrape_configs_hash:
+  scrape_configs:
+    - job_name: puppetlogs
+      pipeline_stages:
+      static_configs:
+      - targets:
+          - "%{facts.networking.fqdn}"
+        labels:
+          job: puppet_logs  # A `job` label is fairly standard in prometheus and useful for linking metrics and logs.
+          host: "%{facts.networking.fqdn}" # A `host` label will help identify logs from this machine vs others
+          __path__: /var/log/puppetlabs/*/*.log  # The path matching uses a third party library: https://github.com/bmatcuk/doublestar
+    - job_name: loki_logs
+      static_configs:
+      - targets:
+          - localhost
+        labels:
+          job: loki_logs
+          # we don't set host here, we rather get it from the filename below
+          __path__: /var/log/loki_logs/*.log
+      pipeline_stages:
+        - match:
+            selector: '{job="loki_logs"}'
+            stages:
+            # extract the host label from the filename
+            - regex:
+                source: filename
+                expression: '/var/log/loki_logs/(?P<host>.*)\.log'
+            - labels:
+                host:
+    - job_name: loki_reports
+      static_configs:
+      - targets:
+          - localhost
+        labels:
+          job: loki_reports
+          # we don't set host here, we rather get it from the filename below
+          __path__: /var/log/loki_reports/*.log
+      pipeline_stages:
+        - match:
+            selector: '{job="loki_reports"}'
+            stages:
+            # extract the host label from the filename
+            - regex:
+                source: filename
+                expression: '/var/log/loki_reports/(?P<host>.*)\.log'
+            - labels:
+                host:
