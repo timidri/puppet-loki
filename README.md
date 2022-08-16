@@ -20,7 +20,7 @@ This is a Puppet Report Processor which can push Puppet reports to Loki.
 It has the following configuration options to be set in `/etc/puppetlabs/puppet/loki.yaml`:
 
 * `loki_uri`: for example, `http://your_loki_host:3100`. This setting is mandatory if `log_destination` is `loki`.
-* `tenant`: the tenant to use by the report processor when pushing to Loki. Default: `tenant1`.
+* `tenant`: the tenant to use by the report processor when pushing to Loki. Default: `undef`.
 * `push_facts`: choose whether or not to push facts to Loki together with reports. Default: `true`.
 * `include_facts`: an array of fact names to be included. Default: `null` (all facts).
 * `log_destination`: if set to `loki`, will push the report to `loki_uri`. For all other values, will write into a log file in `log_dir` called `$host.log`. This file will rotate daily. Default: `loki`.
