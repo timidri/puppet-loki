@@ -1,6 +1,8 @@
 ---
-# promtail::password_file_path: '/etc/promtail/.gc_pw'
-# promtail::password_file_content: ENC[PKCS7,MIIBasdfasdfasdfasdfasdfasdf==]
+# this can be overridden from secrets.yaml which is not in git
+promtail::clients_config_hash:
+  clients:
+    - url: http://localhost:3100/loki/api/v1/push
 promtail::server_config_hash:
   server:
     http_listen_port: 9274
