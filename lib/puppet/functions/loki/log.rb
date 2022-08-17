@@ -40,7 +40,7 @@ Puppet::Functions.create_function(:'loki::log') do
   end
 
   def loki_log_hash(loki_dest, labels, tenant=null, hash)
-    loki_log_s(loki_dest, labels, tenant, result_set.hash.to_json)
+    loki_log_s(loki_dest, labels, tenant, hash.to_json)
   end
 
   def loki_log_rs(loki_dest, labels, tenant=null, result_set)
