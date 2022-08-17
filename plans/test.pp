@@ -8,7 +8,7 @@ plan loki::test(
   TargetSpec $targets,
   Optional[String[1]] $tenant = undef,
 ) {
-  $labels = { 'host' => $targets, 'puppet' => 'plan_logs' }
+  $labels = { 'host' => 'otherhost.se.automationdemos.com', 'puppet' => 'plan_logs' }
 
   # apply_prep($targets)
 
