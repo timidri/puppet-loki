@@ -14,7 +14,7 @@ plan loki::test(
 
   out::message('Loki test')
   $service_result = run_task('service', $targets, { 'action' => 'status', 'name' => 'sshd' })
-  loki::log($loki_dest, $labels, $tenant, { 'note' => 'Ran service task', 'name' => 'sshd', 'results' => $service_result[0] })
+  loki::log($loki_dest, $labels, $tenant, { 'note' => 'Ran service task', 'plan' => 'loki::test', 'name' => 'sshd', 'results' => $service_result[0] })
 
   $package_result = run_task('package', $targets, { 'action' => 'status', 'name' => 'sshd' })
   loki::log($loki_dest, $labels, $tenant, $package_result[0])
