@@ -1,6 +1,6 @@
 # Puppet-Loki integration
 
-This is a bolt project demonstrating options for sending operational information 
+This is a bolt project demonstrating options for sending operational information
 from Puppet plans and Puppet reports to Grafana Loki.
 
 This repo contains 3 main components and some supporting files:
@@ -26,7 +26,7 @@ It has the following configuration options to be set in `/etc/puppetlabs/puppet/
 * `log_destination`: if set to `loki`, will push the report to `loki_uri`. For all other values, will write into a log file in `log_dir` called `$host.log`. This file will rotate daily. Default: `loki`.
 * `log_dir`: directory containing the log files, needs to grant permissions for creating files to the `pe-puppet` user. Default: `/var/log/loki_reports`.
 
-For installing the report processor, see https://puppet.com/docs/puppet/7/reporting.html
+For installing the report processor, see `https://puppet.com/docs/puppet/7/reporting.html`
 
 ## Supporting files
 
