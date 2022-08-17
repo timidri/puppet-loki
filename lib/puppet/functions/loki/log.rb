@@ -32,6 +32,17 @@ Puppet::Functions.create_function(:'loki::log') do
     param 'ResultSet', :result_set
   end
 
+  dispatch :loki_log_hash do
+    param loki_dest_type, :loki_dest
+    param 'Hash[String,String]', :labels
+    param 'Optional[String]', :tenant
+    param 'Hash', :hash
+  end
+
+  def loki_log_hash(loki_dest, labels, tenant=null, hash)
+    loki_log_s(loki_dest, labels, tenant, result_set.hash.to_json)
+  end
+
   def loki_log_rs(loki_dest, labels, tenant=null, result_set)
     loki_log_s(loki_dest, labels, tenant, result_set.to_data[0].to_json)
   end
